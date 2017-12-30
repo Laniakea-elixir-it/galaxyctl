@@ -1,2 +1,7 @@
-# galaxyctl
-python library for galaxy management
+galaxyctl
+=========
+
+Python library for galaxy management
+
+Usage
+-----
