@@ -24,8 +24,6 @@ from galaxyctl_libs import OneDataCtl
 
 # Logging
 import logging
-if not os.geteuid() == 0:
-    sys.exit('[Error] Script must be run as root.')
 logging.basicConfig(filename='/var/log/galaxy/galaxyctl.log', format='%(levelname)s %(asctime)s %(message)s', level=logging.DEBUG)
 
 # Init system
