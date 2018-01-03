@@ -13,6 +13,7 @@ import time
 import argparse
 
 # Custom libraries
+from galaxyctl import galaxyctl_libs
 from galaxyctl_libs import __version__
 from galaxyctl_libs import DetectGalaxyCommands
 from galaxyctl_libs import UwsgiSocket
@@ -23,6 +24,8 @@ from galaxyctl_libs import OneDataCtl
 
 # Logging
 import logging
+if not os.geteuid() == 0:
+    sys.exit('[Error] Script must be run as root.')
 logging.basicConfig(filename='/var/log/galaxy/galaxyctl.log', format='%(levelname)s %(asctime)s %(message)s', level=logging.DEBUG)
 
 # Init system
