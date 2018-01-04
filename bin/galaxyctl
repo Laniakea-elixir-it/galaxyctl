@@ -359,6 +359,7 @@ def galaxyctl():
       if val in {'--force', '--timeout', '--retry'}:
         argparse.ArgumentParser().error("invalid argumets: --force, --retry, --timeout")
 
+    # please read https://stackoverflow.com/questions/4060221/how-to-reliably-open-a-file-in-the-same-directory-as-a-python-script
     onedatactl_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
     onedatactl_script = '%s/onedatactl' % onedatactl_path
