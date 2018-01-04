@@ -30,7 +30,7 @@ luksctl_config_file = find_ini_file('luks-cryptdev.ini')
 
 # Logging
 from galaxyctl import set_log
-logging = set_log()
+logs = set_log()
 
 #______________________________________
 def cli_options():
@@ -64,7 +64,7 @@ def display_dmsetup_info(cryptdev):
     print stdOutValue
     print 'Encrypted volume: ' + bcolors.status_ok
   else:
-    logging.error('[luksctl] %s' % stdErrValue)
+    logs.error('[luksctl] %s' % stdErrValue)
     print 'Encrypted volume: ' + bcolors.status_fail
 
 #______________________________________

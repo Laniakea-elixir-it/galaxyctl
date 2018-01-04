@@ -19,16 +19,17 @@ except ImportError:
   import configparser
 
 # Custom libraries
-from galaxyctl_libs import __version__
-from galaxyctl_libs import bcolors
-from galaxyctl_libs import OneDataCtl
+from galaxyctl import __version__
+from galaxyctl import bcolors
+from galaxyctl import OneDataCtl
+
+# read /etc/galaxyctl/onedatactl.ini configuration file
+from galaxyctl import find_ini_file
+onedatactl_config_file = find_ini_file('onedatactl.ini')
 
 # Logging
-import logging
-logging.basicConfig(filename='{{ galaxy_log_path }}/galaxyctl.log', format='%(levelname)s %(asctime)s %(message)s', level=logging.DEBUG)
-
-# Config files
-onedatactl_config_file = '{{ onedatactl_config_file }}'
+from galaxyctl import set_log
+logs = set_log()
 
 #______________________________________
 def cli_options():
@@ -51,7 +52,7 @@ def check_oneclient():
   except OSError as e:
     if e.errno == os.errno.ENOENT:
       # handle oneclient not found error.
-      logging.error('[onedatactl]  Oneclient is not installed.')
+      logs.error('[onedatactl]  Oneclient is not installed.')
       print '[Error] Oneclient is not installed on your system. Please install it: https://onedata.org/docs/doc/using_onedata/oneclient.html'
     else:
       # Something else went wrong while trying to run `wget`
@@ -61,7 +62,7 @@ def check_oneclient():
 def check_file(fname):
   try:
     with open(fname) as f:
-      logging.info('[onedatactl] onedatactl_config_file: %s' % onedatactl_config_file)
+      logs.info('[onedatactl] onedatactl_config_file: %s' % onedatactl_config_file)
       f.close()
       return True
   except IOError as e:
