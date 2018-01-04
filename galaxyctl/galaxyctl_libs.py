@@ -11,8 +11,6 @@
 # uwsgi
 # lsof
 
-__version__ = "0.0.1"
-
 # Imports
 import socket
 import errno

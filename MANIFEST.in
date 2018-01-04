@@ -1,2 +1,4 @@
 include *.rst LICENSE
 include config/galaxyctl.ini
+include config/onedatactl.ini.sample
+include config/luksctl.ini.sample

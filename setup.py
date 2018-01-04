@@ -15,9 +15,22 @@ def get_config_dir():
     path = sys.prefix + '/etc/galaxyctl/'
   return path
 
+import ast, os, re
+SOURCE_DIR = "galaxyctl"
+
+with open('%s/__init__.py' % SOURCE_DIR, 'rb') as f:
+    init_contents = f.read().decode('utf-8')
+
+    def get_var(var_name):
+        pattern = re.compile(r'%s\s+=\s+(.*)' % var_name)
+        match = pattern.search(init_contents).group(1)
+        return str(ast.literal_eval(match))
+
+    version = get_var("__version__")
+
 setup(
   name='galaxyctl',
-  version='0.1.0a1',
+  version=version,
   description='galaxy,onedata and luks volume management',
   long_description=readme(),
   url='https://github.com/mtangaro/galaxyctl',

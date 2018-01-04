@@ -1,3 +1,5 @@
+__version__ = "0.1.0a1"
+
 from galaxyctl_libs import bcolors
 from galaxyctl_libs import DetectGalaxyCommands
 from galaxyctl_libs import UwsgiSocket
