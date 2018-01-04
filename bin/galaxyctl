@@ -23,7 +23,7 @@ from galaxyctl import LUKSCtl
 from galaxyctl import OneDataCtl
 
 from galaxyctl import find_ini_file
-galaxyctl_config_file = find_ini_file()
+galaxyctl_config_file = find_ini_file('galaxyctl.ini')
 
 # read /etc/galaxyctl/galaxyctl.ini configuration file
 from  galaxyctl import read_ini_file
@@ -34,14 +34,11 @@ supervisord_conf_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'supervis
 galaxy_config_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'galaxy_config_file')
 uwsgi_pid_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'uwsgi_pid_file')
 luks_config_file = read_ini_file(galaxyctl_config_file, 'luks', 'luks_config_file')
-luksctl_path = read_ini_file(galaxyctl_config_file, 'luks', 'luksctl_path')
 onedatactl_config_file = read_ini_file(galaxyctl_config_file, 'onedata', 'onedatactl_config_file')
-onedatactl_path = read_ini_file(galaxyctl_config_file, 'onedata', 'onedatactl_path')
 
 # Logging
-import logging
-galaxyctl_log_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'galaxyctl_log_file')
-logging.basicConfig(filename=galaxyctl_log_file, format='%(levelname)s %(asctime)s %(message)s', level=logging.DEBUG)
+from galaxyctl import set_log
+logs = set_log('DEBUG')
 
 #______________________________________
 def cli_options():
@@ -63,7 +60,7 @@ def cli_options():
 def startup_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=600, n_retries=5):
  
   cmd = DetectGalaxyCommands(init_system)
-  logging.debug('[galaxyctl] %s' % cmd.get_startup_command())
+  logs.debug('[galaxyctl] %s' % cmd.get_startup_command())
   os.system(cmd.get_startup_command())
  
   # Wait supervisord start
@@ -84,21 +81,21 @@ def startup_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=6
 #______________________________________
 def stop_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', force_proc=False):
 
-  logging.debug('[galaxyctl] Stop Galaxy')
+  logs.debug('[galaxyctl] Stop Galaxy')
 
   stats = UwsgiStatsServer(timeout=5, fname=ini_file)
   busy_list = stats.GetBusyList()
 
   cmd = DetectGalaxyCommands(init_system)
-  logging.debug('[galaxyctl] %s' % cmd.get_stop_command())
+  logs.debug('[galaxyctl] %s' % cmd.get_stop_command())
   os.system(cmd.get_stop_command())
 
   # kill workers if still alive
   if busy_list:
-    logging.debug('[galaxyctl] Busy list: %s' % str(busy_list))
+    logs.debug('[galaxyctl] Busy list: %s' % str(busy_list))
     for pid in busy_list:
       if check_pid(pid) is True:
-        logging.debug('[galaxyctl] Killing workers: %s' % str(pid))
+        logs.debug('[galaxyctl] Killing workers: %s' % str(pid))
         os.kill(pid,9)
 
   if force_proc is True:
@@ -110,15 +107,15 @@ def stop_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', force_proc=Fal
 # kill uWSGI master process if still alive
 # solve uWSGI abnormal termination and fatal error
 def kill_uwsgi_master():
-  logging.debug('[galaxyctl] Check uWSGI master process.')
+  logs.debug('[galaxyctl] Check uWSGI master process.')
 
   master_pid, stderr, status = UwsgiSocket(fname=galaxy_config_file).get_uwsgi_master_pid()
 
   if status == 0:
-    logging.debug('[galaxyctl] uWSGI still alive. Killing...')
+    logs.debug('[galaxyctl] uWSGI still alive. Killing...')
     os.kill(int(master_pid),9)
   else:
-    logging.debug('[galaxyctl] uWSGI master process already closed.')
+    logs.debug('[galaxyctl] uWSGI master process already closed.')
 
 #______________________________________
 # Check For the existence of a unix pid.
@@ -156,10 +153,10 @@ def check_proc(pidfile):
 
 def start_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=300, force_proc=False, n_retries=5):
 
-  logging.debug('[galaxyctl] Start Galaxy')
+  logs.debug('[galaxyctl] Start Galaxy')
 
   cmd = DetectGalaxyCommands(init_system)
-  logging.debug('[galaxyctl] %s' % cmd.get_start_command())
+  logs.debug('[galaxyctl] %s' % cmd.get_start_command())
   os.system(cmd.get_start_command())
 
   # Wait Galaxy start
@@ -179,7 +176,7 @@ def start_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=300
 
 def galaxy_workers_check(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=300):
 
-  logging.debug('[galaxyctl] UWSGI workers check')
+  logs.debug('[galaxyctl] UWSGI workers check')
 
   # Wait Galaxy start
   stats = UwsgiStatsServer(timeout=wait_time, fname=ini_file)
@@ -201,7 +198,7 @@ def galaxy_workers_check(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_
   # check workers 5 times before raise error
   retries = 0
   while status is False:
-    logging.debug('[galaxyctl] UWSGI workers retry: %s' % str(retries))
+    logs.debug('[galaxyctl] UWSGI workers retry: %s' % str(retries))
     time.sleep(2)
     status = stats.CheckUwsgiWorkers(ini_file)
     retries += 1
@@ -215,8 +212,8 @@ def galaxy_workers_check(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_
 # This function check if uWSGI workers are accepting requests, otherwise restart Galaxy 
 def galaxy_startup_check(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=300, n_retries=5):
 
-  logging.debug('[galaxyctl] Galaxy workers check with forced restart if all workers busy.')
-  logging.debug('[galaxyctl] Overall retries number: %s' % n_retries)
+  logs.debug('[galaxyctl] Galaxy workers check with forced restart if all workers busy.')
+  logs.debug('[galaxyctl] Overall retries number: %s' % n_retries)
 
   stats = UwsgiStatsServer(timeout=wait_time, fname=ini_file)
   server = stats.GetUwsgiStatsServer()
@@ -226,7 +223,7 @@ def galaxy_startup_check(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_
   status = stats.CheckUwsgiWorkers(ini_file)
   while status is False:
     time.sleep(5) # pause to let workers accept requests
-    logging.debug('[galaxyctl] Galaxy restart retry %s of %s' % (str(retries), str(n_retries)))
+    logs.debug('[galaxyctl] Galaxy restart retry %s of %s' % (str(retries), str(n_retries)))
     busy_list = stats.GetBusyList()
     galaxy_startup_check_restart(busy_list)
     status = stats.CheckUwsgiWorkers(ini_file)
@@ -245,7 +242,7 @@ def galaxy_startup_check_restart(busy_list):
 
   cmd = DetectGalaxyCommands(init_system)
 
-  logging.debug('[galaxyctl] %s' % cmd.get_stop_command())
+  logs.debug('[galaxyctl] %s' % cmd.get_stop_command())
   os.system(cmd.get_stop_command())
 
   if busy_list:
@@ -257,13 +254,13 @@ def galaxy_startup_check_restart(busy_list):
   # kill uwsgi master process if still alive
   kill_uwsgi_master()
 
-  logging.debug('[galaxyctl] %s' % cmd.get_start_command())
+  logs.debug('[galaxyctl] %s' % cmd.get_start_command())
   os.system(cmd.get_start_command())
 
 #______________________________________
 def restart_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=300, force_proc=False, n_retries=5):
   
-  logging.debug('[galaxyctl] Restart Galaxy')
+  logs.debug('[galaxyctl] Restart Galaxy')
 
   stop_galaxy(ini_file, force_proc)
 
@@ -272,7 +269,7 @@ def restart_galaxy(ini_file='/home/galaxy/galaxy/config/galaxy.ini', wait_time=3
 #______________________________________
 def status_galaxy():
   cmd = DetectGalaxyCommands(init_system)
-  logging.debug('[galaxyctl] %s' % cmd.get_status_command())
+  logs.debug('[galaxyctl] %s' % cmd.get_status_command())
   os.system(cmd.get_status_command())
 
 #______________________________________
@@ -335,6 +332,9 @@ def galaxyctl():
       if val in {'--force', '--timeout', '--retry', '--userdata', '--refdata'}:
         argparse.ArgumentParser().error("invalid argumets: --force, --retry, --timeout, --userdata, --refdata")
 
+    # please read https://stackoverflow.com/questions/4060221/how-to-reliably-open-a-file-in-the-same-directory-as-a-python-script
+    luksctl_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) 
+
     luksctl_script = '%s/luksctl' % luksctl_path
     if os.path.isfile(luksctl_script) is not True:
       raise Exception('No luksctl script in %s' % luksctl_path)
@@ -358,6 +358,8 @@ def galaxyctl():
     for val in input_list:
       if val in {'--force', '--timeout', '--retry'}:
         argparse.ArgumentParser().error("invalid argumets: --force, --retry, --timeout")
+
+    onedatactl_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
     onedatactl_script = '%s/onedatactl' % onedatactl_path
     if os.path.isfile(onedatactl_script) is not True:

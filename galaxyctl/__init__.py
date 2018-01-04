@@ -9,3 +9,4 @@ from galaxyctl_libs import OneDataCtl
 
 from .read_ini_file import read_ini_file
 from .find_ini_file import find_ini_file
+from .common_logging import set_log

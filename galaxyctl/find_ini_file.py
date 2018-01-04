@@ -9,12 +9,12 @@ def is_virtual():
     return (getattr(sys, 'base_prefix', sys.prefix) != sys.prefix or
             hasattr(sys, 'real_prefix'))
 
-def find_ini_file():
+def find_ini_file(ini_file):
 
   path='/etc/galaxyctl'
   
   if is_virtual() is True:
     path = sys.prefix + '/etc/galaxyctl/'
 
-  ini_file = path + '/galaxyctl.ini'
-  return ini_file
+  full_ini_file_path = path + '/' + ini_file
+  return full_ini_file_path

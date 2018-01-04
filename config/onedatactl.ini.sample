@@ -1,0 +1,51 @@
+# ELIXIR-ITALY
+# INDIGO-DataCloud
+# IBIOM-CNR
+#
+# Contributors:
+# author: Tangaro Marco Antonio
+# email: ma.tangaro@ibiom.cnr.it
+
+[userdata]
+
+# Mountpoint for user data. 
+# Enabling this option onedata space will be used to store user data 
+#mountpoint = /export
+
+# Insert Onedata provider for user data, e.g. oneprovider2.cloud.ba.infn.it
+#provider = userdata_provider
+
+# Insert Onedata token for user data, e.g. MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzYmlkZW500aWZpZXIgeExqMi00xdFN3YVp1VWIxM1dFSzRoNEdkb2x3cXVwTnpSaGZONXJSN2tZUQowMDFhY2lkIHRpbWUgPCAxNTI1MzM00NzgyCjAwMmZzaWduYXR1cmUgIOzeMtypO75nZvPJdAocInNbgH9zvJi6ifgXDrFVCr00K
+#token = userdata_token
+
+# Allow insecure connection
+#insecure = True
+
+# Allow mount on non empty directory
+#nonempty = True
+
+# Galaxy user UID and GID. By default Galaxy is deployed using 4001.
+#uid = 4001
+#gid = 4001
+
+[refdata]
+
+# Mountpoint for reference data.
+# Enabling this option the reference data will be loaded from onedata space.
+#mountpoint = /refdata
+
+# Insert Onedata provider for reference data, e.g. oneprovider2.cloud.ba.infn.it
+#provider = refdata_provider
+
+# Insert Onedata token for reference data, e.g. MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzYmlkZW500aWZpZXIgeExqMi00xdFN3YVp1VWIxM1dFSzRoNEdkb2x3cXVwTnpSaGZONXJSN2tZUQowMDFhY2lkIHRpbWUgPCAxNTI1MzM00NzgyCjAwMmZzaWduYXR1cmUgIOzeMtypO75nZvPJdAocInNbgH9zvJi6ifgXDrFVCr00K
+#token = refdata_token
+
+# Allow insecure connection
+# insecure = False
+
+# Allow mount on non empty directory
+#nonempty = False
+
+# Galaxy user UID and GID
+#uid = 4001
+#gid = 4001
