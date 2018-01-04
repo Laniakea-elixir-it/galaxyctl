@@ -27,8 +27,8 @@ except ImportError:
   import configparser
 
 # Log config
-import logging
-logging.basicConfig(filename='/var/log/galaxy/galaxyctl.log', format='%(levelname)s %(asctime)s %(message)s', level=logging.DEBUG)
+from .common_logging import set_log
+logs = set_log()
 
 
 ####################################
@@ -170,9 +170,9 @@ class UwsgiStatsServer:
   #______________________________________
   def GetUwsgiStatsServer(self):
 
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] GetUwsgiStatsServer()')
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] Waiting Galaxy stats server')
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] Timeout: %s' % self.timeout)
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] GetUwsgiStatsServer()')
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] Waiting Galaxy stats server')
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] Timeout: %s' % self.timeout)
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -203,7 +203,7 @@ class UwsgiStatsServer:
         if type(err.args) != tuple or err[0] != errno.ETIMEDOUT:
           pass
       else:
-        logging.debug('[galaxyctl_libs UwsgiStatsServer] Stats server enabled on: %s:%s' % (self.server, self.port))
+        logs.debug('[galaxyctl_libs UwsgiStatsServer] Stats server enabled on: %s:%s' % (self.server, self.port))
         return s
 
   #______________________________________
@@ -223,7 +223,7 @@ class UwsgiStatsServer:
     if configParser.has_option(section, option):
       self.par = configParser.get(section , option)
     else:
-      logging.debug('[galaxyctl_libs UwsgiStatsServer] No [%s] section in %s' % (section, fname))
+      logs.debug('[galaxyctl_libs UwsgiStatsServer] No [%s] section in %s' % (section, fname))
       return False
 
     return self.par
@@ -235,29 +235,29 @@ class UwsgiStatsServer:
     if fname is not None:
       self.fname = fname
 
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] CheckUwsgiWorkers(fname=%s)' % fname)
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] CheckUwsgiWorkers(fname=%s)' % fname)
 
     uwsgi_processes = self.ReadUwsgiIniFile(fname, 'uwsgi', 'processes')
     if uwsgi_processes is False:
       return False
     else:
-      logging.debug('[galaxyctl_libs UwsgiStatsServer] UWSGI processes: %s' % uwsgi_processes)
+      logs.debug('[galaxyctl_libs UwsgiStatsServer] UWSGI processes: %s' % uwsgi_processes)
 
     stats_json = self.GetStatsJson()
     stats_dictionary = json.loads(stats_json)
 
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] Check uWSGI workers status')
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] Check uWSGI workers status')
 
     for workers in stats_dictionary['workers']:
       workers_id = workers.get('id')
       workers_status = workers.get('accepting')
       workers_pid = workers.get('pid')
-      logging.debug('[galaxyctl_libs UwsgiStatsServer] Worker pid: %s' % workers_pid)
-      logging.debug('[galaxyctl_libs UwsgiStatsServer] Worker status: %s' % workers_status)
+      logs.debug('[galaxyctl_libs UwsgiStatsServer] Worker pid: %s' % workers_pid)
+      logs.debug('[galaxyctl_libs UwsgiStatsServer] Worker status: %s' % workers_status)
       if workers_status == 1:
         return True
 
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] No uWSGI workers accepting requests')
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] No uWSGI workers accepting requests')
     return False
 
   #______________________________________
@@ -266,14 +266,14 @@ class UwsgiStatsServer:
     if fname is not None:
       self.fname = fname
 
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] GetBusyList(fname=%s)' % fname)
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] GetBusyList(fname=%s)' % fname)
 
     busy_list = []
 
     # Get uwsgi workers number
     uwsgi_processes = self.ReadUwsgiIniFile(self.fname, 'uwsgi', 'processes')
 
-    logging.debug('[galaxyctl_libs UwsgiStatsServer] Wait Galaxy stats server on %s:%s' % (self.server, self.port))
+    logs.debug('[galaxyctl_libs UwsgiStatsServer] Wait Galaxy stats server on %s:%s' % (self.server, self.port))
     stats = self.GetUwsgiStatsServer()
 
     if stats:
@@ -287,7 +287,7 @@ class UwsgiStatsServer:
         if workers_status == 0:
           busy_list.append(workers_pid)
 
-      logging.debug('[galaxyctl_libs UwsgiStatsServer] Busy list: %s' % busy_list)
+      logs.debug('[galaxyctl_libs UwsgiStatsServer] Busy list: %s' % busy_list)
       return busy_list
 
 
@@ -362,21 +362,21 @@ class OneDataCtl:
     if configParser.has_option(self.section, 'mountpoint'):
       self.mountpoint = configParser.get(self.section, 'mountpoint')
     else:
-      logging.error('[galaxyctl_libs OneDataCtl] No mountpoint in section %s.' % section)
+      logs.error('[galaxyctl_libs OneDataCtl] No mountpoint in section %s.' % section)
       raise Exception('[galaxyctl_libs OneDataCtl] No mounpoint in section %s.' % section)
 
     # provider
     if configParser.has_option(self.section, 'provider'):
       self.provider = configParser.get(self.section, 'provider')
     else:
-      logging.error('[galaxyctl_libs OneDataCtl] No provider specified section in %s.' % section)
+      logs.error('[galaxyctl_libs OneDataCtl] No provider specified section in %s.' % section)
       raise Exception('[galaxyctl_libs OneDataCtl] No provider in section %s.' % section)
 
     # token
     if configParser.has_option(self.section, 'token'):
       self.token = configParser.get(self.section, 'token')
     else:
-      logging.error('[galaxyctl_libs OneDataCtl] No token specified section in %s.' % section)
+      logs.error('[galaxyctl_libs OneDataCtl] No token specified section in %s.' % section)
       raise Exception('[galaxyctl_libs OneDataCtl] No token in section %s.' % section)
 
     if configParser.has_option(self.section, 'insecure'): self.insecure = configParser.get(self.section, 'insecure')
@@ -411,19 +411,19 @@ class OneDataCtl:
     if self.insecure == 'True': command += ' --insecure'
     if self.nonempty == 'True': command += ' -o nonempty'
 
-    logging.debug('[galaxyctl_libs OneDataCtl] %s' % str(command))
+    logs.debug('[galaxyctl_libs OneDataCtl] %s' % str(command))
     subprocess.call( command, shell=True, preexec_fn=self.demote(self.uid, self.gid) )
 
   #______________________________________
   # Umount space
   def umount_space(self):
     command = 'fusermount -u %s' % (self.mountpoint)
-    logging.debug('[galaxyctl_libs OneDataCtl] %s' % str(command))
+    logs.debug('[galaxyctl_libs OneDataCtl] %s' % str(command))
     subprocess.call( command, shell=True, preexec_fn=self.demote(self.uid, self.gid) )
 
   #______________________________________
   def demote(self, user_uid, user_gid):
-     logging.debug('[galaxyctl_libs OneDataCtl] Starting demotion: uid, gid = %d, %d' % (os.getuid(), os.getgid()) )
+     logs.debug('[galaxyctl_libs OneDataCtl] Starting demotion: uid, gid = %d, %d' % (os.getuid(), os.getgid()) )
      os.setgid(user_gid)
      os.setuid(user_uid)
-     logging.debug('[galaxyctl_libs OneDataCtl] Finished demotion: uid, gid = %d, %d' % (os.getuid(), os.getgid()) )
+     logs.debug('[galaxyctl_libs OneDataCtl] Finished demotion: uid, gid = %d, %d' % (os.getuid(), os.getgid()) )
