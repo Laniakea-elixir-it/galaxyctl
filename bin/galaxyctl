@@ -42,7 +42,7 @@ logs = set_log()
 
 #______________________________________
 def cli_options():
-  parser = argparse.ArgumentParser(description='Onedata connection script')
+  parser = argparse.ArgumentParser(description='Galaxy Central Management Tool script')
   parser.add_argument('action', choices=['start','stop','restart','startup','status','open','close','mount','umount'], nargs='?', help='Action')
   parser.add_argument('module', choices=['galaxy','luks','onedata'], nargs='?', help='Load module')
   parser.add_argument('-f', '--force', action='store_true', dest='force', default=False, help='Force Galaxy to start')
