@@ -16,4 +16,5 @@ def find_ini_file():
   if is_virtual() is True:
     path = sys.prefix + '/etc/galaxyctl/'
 
-  return path 
+  ini_file = path + '/galaxyctl.ini'
+  return ini_file

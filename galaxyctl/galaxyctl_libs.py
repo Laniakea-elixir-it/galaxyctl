@@ -49,7 +49,6 @@ class bcolors:
   status_stop = '[ STOP ]'
   status_fail = '[ ' + FAIL + 'FAIL' + ENDC + ' ]'
 
-
 ####################################
 
 class DetectGalaxyCommands:

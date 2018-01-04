@@ -13,37 +13,33 @@ import time
 import argparse
 
 # Custom libraries
-from galaxyctl import galaxyctl_libs
-from galaxyctl_libs import __version__
-from galaxyctl_libs import DetectGalaxyCommands
-from galaxyctl_libs import UwsgiSocket
-from galaxyctl_libs import UwsgiStatsServer
-from galaxyctl_libs import bcolors
-from galaxyctl_libs import LUKSCtl
-from galaxyctl_libs import OneDataCtl
+from galaxyctl import bcolors
+from galaxyctl import DetectGalaxyCommands
+from galaxyctl import UwsgiSocket
+from galaxyctl import UwsgiStatsServer
+from galaxyctl import LUKSCtl
+from galaxyctl import OneDataCtl
+
+from galaxyctl import find_ini_file
+galaxyctl_config_file = find_ini_file()
+
+# read /etc/galaxyctl/galaxyctl.ini configuration file
+from  galaxyctl import read_ini_file
+init_system = read_ini_file(galaxyctl_config_file, 'galaxy', 'init_system')
+supervisord_conf_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'supervisord_conf_file')
+
+# Load configuration files
+galaxy_config_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'galaxy_config_file')
+uwsgi_pid_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'uwsgi_pid_file')
+luks_config_file = read_ini_file(galaxyctl_config_file, 'luks', 'luks_config_file')
+luksctl_path = read_ini_file(galaxyctl_config_file, 'luks', 'luksctl_path')
+onedatactl_config_file = read_ini_file(galaxyctl_config_file, 'onedata', 'onedatactl_config_file')
+onedatactl_path = read_ini_file(galaxyctl_config_file, 'onedata', 'onedatactl_path')
 
 # Logging
 import logging
-logging.basicConfig(filename='/var/log/galaxy/galaxyctl.log', format='%(levelname)s %(asctime)s %(message)s', level=logging.DEBUG)
-
-# Init system
-# Supported: supervisord, init
-# supervisord ---> Current default, it is mandatory for docker container, since there's no systemd.
-# init ----------> CentOS 7 and Ubuntu 16.04 use systemd, Ubuntu 14.04 is using upstart.
-init_system = 'supervisord'
-
-# Supervisord config file:
-# centos: /etc/supervisord.conf
-# ubuntu: /etc/supervisor/supervisord.conf
-supervisord_conf_file = '/etc/supervisord.conf'
-
-# Config files
-galaxy_config_file = '/home/galaxy/galaxy/config/galaxy.ini'
-uwsgi_pid_file = '/var/log/galaxy/uwsgi.pid' # this file is not in galaxy.ini file, but loaded at run-time using the uwsgi command in galaxy_web.ini file in supervisor directory.
-luks_config_file = '/etc/galaxy/luks-cryptdev.ini'
-luksctl_path = '/usr/local/bin'
-onedatactl_config_file = '/etc/galaxy/onedatactl.ini'
-onedatactl_path = '/usr/local/bin'
+galaxyctl_log_file = read_ini_file(galaxyctl_config_file, 'galaxy', 'galaxyctl_log_file')
+logging.basicConfig(filename=galaxyctl_log_file, format='%(levelname)s %(asctime)s %(message)s', level=logging.DEBUG)
 
 #______________________________________
 def cli_options():
