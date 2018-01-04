@@ -30,7 +30,7 @@ luksctl_config_file = find_ini_file('luks-cryptdev.ini')
 
 # Logging
 from galaxyctl import set_log
-logging = set_log('DEBUG')
+logging = set_log()
 
 #______________________________________
 def cli_options():

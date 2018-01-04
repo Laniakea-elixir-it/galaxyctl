@@ -38,7 +38,7 @@ onedatactl_config_file = read_ini_file(galaxyctl_config_file, 'onedata', 'onedat
 
 # Logging
 from galaxyctl import set_log
-logs = set_log('DEBUG')
+logs = set_log()
 
 #______________________________________
 def cli_options():
