@@ -24,9 +24,11 @@ from galaxyctl import UwsgiStatsServer
 from galaxyctl import bcolors
 from galaxyctl import LUKSCtl
 
-# read /etc/galaxyctl/luks-cryptdev.ini configuration file
+# read /etc/galaxy/luks-cryptdev.ini configuration file
 from galaxyctl import find_ini_file
-luksctl_config_file = find_ini_file('luks-cryptdev.ini')
+from galaxyctl import read_ini_file
+galaxyctl_config_file = find_ini_file('galaxyctl.ini')
+luksctl_config_file = read_ini_file(galaxyctl_config_file, 'luks', 'luks_config_file')
 
 # Logging
 from galaxyctl import set_log
