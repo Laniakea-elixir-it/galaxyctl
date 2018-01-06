@@ -25,7 +25,9 @@ from galaxyctl import OneDataCtl
 
 # read /etc/galaxyctl/onedatactl.ini configuration file
 from galaxyctl import find_ini_file
-onedatactl_config_file = find_ini_file('onedatactl.ini')
+from galaxyctl import read_ini_file
+galaxyctl_config_file = find_ini_file('galaxyctl.ini')
+onedatactl_config_file = read_ini_file(galaxyctl_config_file, 'onedata', 'onedatactl_config_file')
 
 # Logging
 from galaxyctl import set_log
