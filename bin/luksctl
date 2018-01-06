@@ -28,7 +28,7 @@ from galaxyctl import LUKSCtl
 from galaxyctl import find_ini_file
 from galaxyctl import read_ini_file
 galaxyctl_config_file = find_ini_file('galaxyctl.ini')
-luksctl_config_file = read_ini_file(galaxyctl_config_file, 'luks', 'luks_config_file')
+luks_config_file = read_ini_file(galaxyctl_config_file, 'luks', 'luks_config_file')
 
 # Logging
 from galaxyctl import set_log
@@ -113,7 +113,7 @@ def luksctl():
     return
 
   # Read luks ini file variables
-  luks = LUKSCtl(luksctl_config_file)
+  luks = LUKSCtl(luks_config_file)
 
   if options.action == "status":
     display_dmsetup_info(luks.get_cryptdev())
