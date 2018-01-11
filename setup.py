@@ -8,10 +8,17 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
+
+def is_virtual():
+    import sys
+    """ Return if we run in a virtual environtment. """
+    # Check supports venv && virtualenv
+    return (getattr(sys, 'base_prefix', sys.prefix) != sys.prefix or
+            hasattr(sys, 'real_prefix'))
+
 def get_config_dir():
-  import os, sys
   path='/etc/galaxyctl'
-  if not os.geteuid() == 0:
+  if is_virtual() is True:
     path = sys.prefix + '/etc/galaxyctl/'
   return path
 
