@@ -17,6 +17,7 @@ def is_virtual():
             hasattr(sys, 'real_prefix'))
 
 def get_config_dir():
+  import sys
   path='/etc/galaxyctl'
   if is_virtual() is True:
     path = sys.prefix + '/etc/galaxyctl/'
