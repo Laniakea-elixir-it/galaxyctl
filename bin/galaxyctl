@@ -112,8 +112,9 @@ def kill_uwsgi_master():
   master_pid, stderr, status = UwsgiSocket(fname=galaxy_config_file).get_uwsgi_master_pid()
 
   if status == 0:
-    logs.debug('[galaxyctl] uWSGI still alive. Killing...')
-    os.kill(int(master_pid),9)
+    for pid in master_pid.splitlines():
+      logs.debug('[galaxyctl] uWSGI still alive: PID %s. Killing...'  % pid)
+      os.kill(int(pid),9)
   else:
     logs.debug('[galaxyctl] uWSGI master process already closed.')
 
