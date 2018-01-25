@@ -1,4 +1,4 @@
-__version__ = "0.1.0b1"
+__version__ = "0.1.0b2"
 
 from galaxyctl_libs import bcolors
 from galaxyctl_libs import DetectGalaxyCommands
