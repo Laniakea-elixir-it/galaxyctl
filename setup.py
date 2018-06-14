@@ -42,7 +42,7 @@ setup(
   url='https://github.com/mtangaro/galaxyctl',
   author='Marco Antonio Tangaro, Federico Zambelli',
   author_email='ma.tangaro@ibiom.cnr.it', 
-  license='MIT',
+  license='GPL-3.0',
   packages=['galaxyctl'],
   classifiers=[
     'Development Status :: 3 - Alpha',
@@ -55,5 +55,3 @@ setup(
               (get_config_dir(), ['config/luks-cryptdev.ini.sample']),
               (get_config_dir(), ['config/onedatactl.ini.sample'])],
 )
-
-print 'prova'
