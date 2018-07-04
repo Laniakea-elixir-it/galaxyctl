@@ -108,22 +108,38 @@ class UwsgiSocket:
     self.port = port
     self.timeout = timeout
 
+    self.par = 0
     if fname is not None:
       self.fname = fname
-
-      configParser = ConfigParser.RawConfigParser()
-      configParser.readfp(open(fname))
-      configParser.read(fname)
 
       section = 'uwsgi'
       option = 'socket'
 
-      if configParser.has_option(section, option):
-        self.par = configParser.get(section , option)
-        self.server = self.par.split(':')[0]
-        self.port = int(self.par.split(':')[1])
-      else:
-        raise Exception('No [uwsgi] section in %s' % fname)
+      filename, file_extension = os.path.splitext(fname)
+      file_extension = file_extension.replace('.', '')
+      if file_extension == 'ini':
+
+        configParser = ConfigParser.RawConfigParser()
+        configParser.readfp(open(fname))
+        configParser.read(fname)
+
+        if configParser.has_option(section, option):
+          self.par = configParser.get(section , option)
+        else:
+          raise Exception('No [uwsgi] section in %s' % fname)
+
+      elif file_extension == 'yml' or file_extension == 'yaml':
+
+        import yaml
+        with open(fname, 'r') as stream:
+          try:
+            config =  yaml.load(stream)
+            self.par = config[section][option]
+          except yaml.YAMLError as exc:
+            logs.error('[galaxyctl_libs] %s' % exc)
+
+    self.server = self.par.split(':')[0]
+    self.port = int(self.par.split(':')[1])
 
   #______________________________________
   def get_server(self): return self.server
@@ -150,22 +166,38 @@ class UwsgiStatsServer:
     self.port = port
     self.timeout = timeout
 
+    self.par = 0
     if fname is not None:
       self.fname = fname
-
-      configParser = ConfigParser.RawConfigParser()
-      configParser.readfp(open(fname))
-      configParser.read(fname)
 
       section = 'uwsgi'
       option = 'stats'
 
-      if configParser.has_option(section, option):
-        self.par = configParser.get(section , option)
-        self.server = self.par.split(':')[0]
-        self.port = int(self.par.split(':')[1])
-      else:
-        raise Exception('No [uwsgi] section in %s' % fname)
+      filename, file_extension = os.path.splitext(fname)
+      file_extension = file_extension.replace('.', '')
+      if file_extension == 'ini':
+
+        configParser = ConfigParser.RawConfigParser()
+        configParser.readfp(open(fname))
+        configParser.read(fname)
+
+        if configParser.has_option(section, option):
+          self.par = configParser.get(section , option)
+        else:
+          raise Exception('No [uwsgi] section in %s' % fname)
+
+      elif file_extension == 'yml' or file_extension == 'yaml':
+  
+        import yaml
+        with open(fname, 'r') as stream:
+          try:
+            config =  yaml.load(stream)
+            self.par = config[section][option]
+          except yaml.YAMLError as exc:
+            logs.error('[galaxyctl_libs] %s' % exc)
+
+    self.server = self.par.split(':')[0]
+    self.port = int(self.par.split(':')[1])
 
   #______________________________________
   def GetUwsgiStatsServer(self):
@@ -214,17 +246,32 @@ class UwsgiStatsServer:
   #______________________________________
   # Returns params from *.ini file
   def ReadUwsgiIniFile(self, fname, section, option):
-    configParser = ConfigParser.RawConfigParser()
-    configParser.readfp(open(fname))
-    configParser.read(fname)
 
     self.par = 0
+    filename, file_extension = os.path.splitext(fname)
+    file_extension = file_extension.replace('.', '')
 
-    if configParser.has_option(section, option):
-      self.par = configParser.get(section , option)
-    else:
-      logs.debug('[galaxyctl_libs UwsgiStatsServer] No [%s] section in %s' % (section, fname))
-      return False
+    if file_extension == 'ini':
+
+      configParser = ConfigParser.RawConfigParser()
+      configParser.readfp(open(fname))
+      configParser.read(fname)
+
+      if configParser.has_option(section, option):
+        self.par = configParser.get(section , option)
+      else:
+        logs.debug('[galaxyctl_libs UwsgiStatsServer] No [%s] section in %s' % (section, fname))
+        return False
+
+    elif file_extension == 'yml' or file_extension == 'yaml':
+
+      import yaml
+      with open(fname, 'r') as stream:
+        try:
+          config =  yaml.load(stream)
+          self.par = config[section][option]
+        except yaml.YAMLError as exc:
+          logs.error('[galaxyctl_libs] %s' % exc)
 
     return self.par
 
