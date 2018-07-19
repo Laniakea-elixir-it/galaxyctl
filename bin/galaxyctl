@@ -38,6 +38,7 @@ onedatactl_config_file = read_ini_file(galaxyctl_config_file, 'onedata', 'onedat
 
 # Logging
 from galaxyctl import set_log
+logs = set_log()
 
 #______________________________________
 def cli_options():
@@ -284,9 +285,6 @@ def galaxyctl():
   if not os.geteuid() == 0:
     sys.exit('[Error] Script must be run as root.')
 
-  # Set logs
-  logs = set_log()
-  
   # Replace galaxy_config_file if needed
   if options.config_file:
     global galaxy_config_file
