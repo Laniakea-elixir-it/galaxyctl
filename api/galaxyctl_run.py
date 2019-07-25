@@ -10,7 +10,6 @@ import os, sys
 from os.path import exists, pathsep
 from string import split
 
-
 # Create logging facility
 import logging
 logging.basicConfig(filename='/var/log/galaxy/galaxyctl-api.log', format='%(levelname)s %(asctime)s %(message)s', level='DEBUG')
@@ -23,7 +22,7 @@ def exec_cmd(cmd):
   communicateRes = proc.communicate()
   stdOutValue, stdErrValue = communicateRes
   status = proc.wait()
-
+  logging.debug('ciao0')
   return status, stdOutValue, stdErrValue
 
 #______________________________________
@@ -41,8 +40,6 @@ def galaxy_startup(endpoint):
 
   command = which('sudo') + ' /usr/local/bin/galaxy-startup'
 
-  print(command)
-
   status, stdout, stderr = exec_cmd(command)
 
   logging.debug( 'Startup stdout: ' + str(stdout) )
@@ -50,6 +47,7 @@ def galaxy_startup(endpoint):
   logging.debug( 'Startup status: ' + str(status) )
 
   response = requests.get(endpoint, verify=False)
+
 
   sc = str(response.status_code)
 

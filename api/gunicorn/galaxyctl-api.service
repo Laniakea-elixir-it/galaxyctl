@@ -6,11 +6,11 @@ Description=Gunicorn instance to serve luksctl api server
 After=network.target
 
 [Service]
-User=luksctl_api
-Group=luksctl_api
+User=galaxy
+Group=galaxy
 WorkingDirectory=/home/galaxy/.galaxyctl/api
 Environment="PATH=/home/galaxy/.galaxyctl/api/venv/bin"
-ExecStart=/home/galaxy/.galaxyctl/api/venv/bin/gunicorn --workers 2 --bind 0.0.0.0:5001 -m 007  app:app
+ExecStart=/home/galaxy/.galaxyctl/api/venv/bin/gunicorn --workers 2 --bind 0.0.0.0:5001 --timeout 300 app:app
 
 [Install]
 WantedBy=multi-user.target
