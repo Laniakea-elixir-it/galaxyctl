@@ -9,6 +9,7 @@ import json, requests
 import os, sys
 from os.path import exists, pathsep
 from string import split
+import socket
 
 # Create logging facility
 import logging
@@ -22,7 +23,6 @@ def exec_cmd(cmd):
   communicateRes = proc.communicate()
   stdOutValue, stdErrValue = communicateRes
   status = proc.wait()
-  logging.debug('ciao0')
   return status, stdOutValue, stdErrValue
 
 #______________________________________
@@ -48,7 +48,6 @@ def galaxy_startup(endpoint):
 
   response = requests.get(endpoint, verify=False)
 
-
   sc = str(response.status_code)
 
   if sc == '200' or sc == '302':
@@ -56,3 +55,15 @@ def galaxy_startup(endpoint):
 
   else:
     return jsonify({'galaxy': 'unavailable'})
+
+
+#______________________________________
+def restart_nginx():
+
+  command = which('sudo') + ' ' + which('systemctl') + ' restart nginx'
+
+  status, stdout, stderr = exec_cmd(command)
+
+  logging.debug( 'NGINX restart status: ' + str(status) )
+  logging.debug( 'NGINX restart  stdout: ' + str(stdout) )
+  logging.debug( 'NGINX stderr: ' + str(stderr) )

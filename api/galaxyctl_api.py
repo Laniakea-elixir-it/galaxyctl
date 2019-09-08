@@ -1,5 +1,6 @@
 from flask import Flask, abort, jsonify, request
 import requests
+from requests.exceptions import ConnectionError
 
 import galaxyctl_run 
 
@@ -12,12 +13,16 @@ def galaxy_startup():
     # else run galaxy-startup script
 
     if not request.json or not 'endpoint' in request.json:
-       print request.json
        abort(400)
 
     endpoint = request.json['endpoint']
 
-    response = requests.get(endpoint, verify=False)
+    try:
+      response = requests.get(endpoint, verify=False)
+    except ConnectionError as e:
+      # restart nginx to prevent connection refused
+      galaxyctl_run.restart_nginx()
+      response = requests.get(endpoint, verify=False)
 
     sc = str(response.status_code)
 
