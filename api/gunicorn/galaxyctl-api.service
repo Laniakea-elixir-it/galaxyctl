@@ -1,0 +1,16 @@
+# Copy this file to /etc/systemd/system/luksctl-api.service
+# and adjust it following your configuration path
+
+[Unit]
+Description=Gunicorn instance to serve luksctl api server
+After=network.target
+
+[Service]
+User=galaxy
+Group=galaxy
+WorkingDirectory=/home/galaxy/.galaxyctl/api
+Environment="PATH=/home/galaxy/.galaxyctl/api/venv/bin"
+ExecStart=/home/galaxy/.galaxyctl/api/venv/bin/gunicorn --workers 2 --bind 0.0.0.0:5001 --timeout 300 app:app
+
+[Install]
+WantedBy=multi-user.target

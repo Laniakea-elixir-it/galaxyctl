@@ -50,8 +50,8 @@ setup(
     'License :: OSI Approved :: MIT License',
   ],
   keywords='galaxy web server',
-  scripts=['bin/galaxyctl', 'bin/luksctl', 'bin/onedatactl'],
-  data_files=[(get_config_dir(), ['config/galaxyctl.ini']),
-              (get_config_dir(), ['config/luks-cryptdev.ini.sample']),
-              (get_config_dir(), ['config/onedatactl.ini.sample'])],
+  scripts=['bin/galaxyctl'],
+  data_files=[
+    (get_config_dir(), ['config/galaxyctl.ini'])
+  ],
 )

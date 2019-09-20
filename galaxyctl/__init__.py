@@ -1,11 +1,8 @@
-__version__ = "0.2.0b1"
+__version__ = "0.3.0b1"
 
-from galaxyctl_libs import bcolors
 from galaxyctl_libs import DetectGalaxyCommands
 from galaxyctl_libs import UwsgiSocket
 from galaxyctl_libs import UwsgiStatsServer
-from galaxyctl_libs import LUKSCtl
-from galaxyctl_libs import OneDataCtl
 
 from .read_ini_file import read_ini_file
 from .find_ini_file import find_ini_file
